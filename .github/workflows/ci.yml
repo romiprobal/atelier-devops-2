@@ -7,9 +7,26 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Configurer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Installer flake8
+        run: pip install flake8
+
+      - name: Vérifier le style du code (Flake8)
+        run: flake8 --max-line-length=100
+
   test:
     runs-on: ubuntu-latest
-
+    needs: lint
     steps:
       - name: Récupérer le code
         uses: actions/checkout@v4
@@ -25,5 +42,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lancer les tests
-        run: |
-          pytest -v
+        run: pytest -v
